@@ -1,0 +1,10 @@
+{
+  "name": "predict-simulator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static port of the Predict Simulator UXR prototype",
+  "scripts": {
+    "start": "python3 server.py",
+    "dev": "python3 server.py"
+  }
+}
