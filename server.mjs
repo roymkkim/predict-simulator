@@ -20,7 +20,6 @@ const mime = {
   ".ico": "image/x-icon",
   ".woff": "font/woff",
   ".woff2": "font/woff2",
-  ".ttf": "font/ttf",
 };
 
 function send(res, status, body, headers = {}) {
@@ -36,21 +35,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const mount = url === "/sheet-simulator" || url.startsWith("/sheet-simulator/")
-    ? "sheet-simulator"
-    : "predict-simulator";
   let rel = url;
-  const prefix = "/" + mount;
-  if (rel === prefix || rel.startsWith(prefix + "/")) {
-    rel = rel.slice(prefix.length) || "/";
+  if (rel.startsWith("/predict-simulator")) {
+    rel = rel.slice("/predict-simulator".length) || "/";
   }
+
   if (rel.endsWith("/")) rel += "index.html";
 
-  const siteRoot = path.join(root, mount);
-  const filePath = path.normalize(path.join(siteRoot, rel));
+  const filePath = path.normalize(path.join(root, "predict-simulator", rel));
   const appIndex = path.join(root, "predict-simulator", "app", "index.html");
 
-  if (!filePath.startsWith(siteRoot)) {
+  if (!filePath.startsWith(path.join(root, "predict-simulator"))) {
     send(res, 403, "Forbidden");
     return;
   }
@@ -65,7 +60,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    if (mount === "predict-simulator" && rel.startsWith("/app/")) {
+    if (rel.startsWith("/app/")) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       fs.createReadStream(appIndex).pipe(res);
       return;
